@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <title>ESP8266</title>
+    
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.4/raphael-min.js"></script>  
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/justgage/1.2.9/justgage.min.js"></script> 
+
+    <!-- <link rel="stylesheet" href="{{ url_for('template', filename='css/styles.css') }}"> -->
+
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <script src="https://code.iconify.design/2/2.1.2/iconify.min.js"></script>
+
+    <script src="https://bernii.github.io/gauge.js/dist/gauge.min.js"></script>
+
+    <link href='https://cdn.jsdelivr.net/npm/boxicons@2.0.5/css/boxicons.min.css' rel='stylesheet'>
+
+    <script src="https://www.gstatic.com/firebasejs/4.3.0/firebase.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script src="//code.jquery.com/jquery-1.10.2.js"></script>
+    <script src="//code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.3/js/materialize.min.js"></script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.2/mqttws31.min.js"
+        type="text/javascript"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</head>
+
+<style>
+    .roundElement {
+        border-radius: 20px;
+    }
+</style>
+
+<body id="body-pd">
+
+    <header class="header" id="header">
+        <div class="header__toggle">
+            <i class='bx bx-menu' id="header-toggle"></i>
+        </div>
+
+        <div class="input-field col s12">
+            <h4>
+                HỆ THỐNG QUẢN LÝ TIÊU THỤ ĐIỆN TRÊN THIẾT BỊ
+            </h4>
+        </div>
+
+        <div class="header__img ">
+        </div>
+    </header>
+
+
+
+    <div class="l-navbar_1 " id="nav-bar">
+        <div class="nav">
+            <div>
+                <a href="# " class="nav__logo ">
+                    <i class='bx bx-layer nav__logo-icon'></i>
+                    <span class="nav__logo-name ">HỆ THỐNG ĐIỀU KHIỂN</span>
+                </a>
+
+                <div id="menu" lass="nav__list ">
+                    <a id="menu_info_enviroment" class="nav__link active ">
+                        <i id="menu_info_enviroment" class='bx bx-grid-alt nav__icon'></i>
+                        <span id="menu_info_enviroment" class="nav__name ">Thông số cảm biến</span>
+                    </a>
+
+
+                    <a id="menu_control" class="nav__link ">
+                        <i id="menu_control" class='bx bx-joystick nav__icon'></i>
+                        <span id="menu_control" class="nav__name ">Điều khiển</span>
+                    </a>
+
+
+                    <a id="menu_chart" class="nav__link ">
+                        <i id="menu_chart" class='bx bx-history nav__icon'></i>
+                        <span id="menu_chart" class="nav__name ">Biểu đồ</span>
+                    </a>
+
+                    <a id="menu_info" class="nav__link ">
+                        <i id="menu_info" class='bx bx-info-circle nav__icon'></i>
+                        <span id="menu_info" class="nav__name ">Thông tin</span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <br>
+    <br>
+    <br>
+
+    <div class="">
+        <div id="enviroment_id" style="display: none;">
+            <div class="row card white roundElement">
+                <!-- class="row card white roundElement" -->
+                <H1 class="center">Giám Sát</H1>
+
+                <div class="col s6 m6 roundElement teal lighten-5">
+                    <H3 class="center">Device 1</H3>
+                    <div class="row">
+                        <div class="col s12">
+
+                            <div class="col s12 m6" style="min-width: 210px;">
+                                <div class="card teal roundElement">
+                                    <div class="card-content white-text">
+                                        <span class="card-title">TEMPERATURE</span>
+                                        <div class="center">
+                                            <H5 id="device1_temp_id"> 99 % </H5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col s12 m6" style="min-width: 210px;">
+                                <div class="card teal roundElement">
+                                    <div class="card-content white-text">
+                                        <span class="card-title">HUMIDITY</span>
+                                        <H5 class="center" id="device1_hum_id">
+                                            79
+                                        </H5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col s12 m6" style="min-width: 210px;">
+                                <div class="card teal roundElement">
+                                    <div class="card-content white-text">
+                                        <span class="card-title">VOLTAGE</span>
+                                        <div class="center">
+                                            <H5 id="device1_voltage_id">220V</H5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col s12 m6" style="min-width: 210px;">
+                                <div class="card teal roundElement">
+                                    <div class="card-content white-text">
+                                        <span class="card-title">CURRENT</span>
+                                        <H5 class="center" id="device1_current_id">
+                                            82A
+                                        </H5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col s12 m6" style="min-width: 210px;">
+                                <div class="card teal roundElement">
+                                    <div class="card-content white-text">
+                                        <span class="card-title">POWER</span>
+                                        <H5 class="center" id="device1_power_id">
+                                            82W
+                                        </H5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col s12 m6" style="min-width: 210px;">
+                                <div class="card teal roundElement">
+                                    <div class="card-content white-text">
+                                        <span class="card-title">ENERGY</span>
+                                        <H5 class="center" id="device1_energy_id">
+                                            82Wh
+                                        </H5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col s12 m6" style="min-width: 210px;">
+                                <div class="card teal roundElement">
+                                    <div class="card-content white-text">
+                                        <span class="card-title">FREQ</span>
+                                        <H5 class="center" id="device1_freq_id">
+                                            60Hz
+                                        </H5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col s12 m6" style="min-width: 210px;">
+                                <div class="card teal roundElement">
+                                    <div class="card-content white-text">
+                                        <span class="card-title">PF</span>
+                                        <H5 class="center" id="device1_pf_id">
+                                            82
+                                        </H5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col s12 m6" style="min-width: 210px;">
+                                <div class="card teal roundElement">
+                                    <div class="card-content white-text">
+                                        <span class="card-title">Total VND</span>
+                                        <H5 class="center" id="device1_price_id">
+                                            82
+                                        </H5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col s12 m6" style="min-width: 210px;">
+                                <div class="card teal roundElement">
+                                    <div class="card-content white-text">
+                                        <span class="card-title">Time Life</span>
+                                        <H5 class="center" id="device1_timelife_id">
+                                            82
+                                        </H5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col s6 m6 roundElement lime lighten-5">
+                    <H3 class="center">Device 2</H3>
+                    <div class="row">
+                        <div class="col s12">
+
+                            <div class="col s12 m6" style="min-width: 210px;">
+                                <div class="card teal roundElement">
+                                    <div class="card-content white-text">
+                                        <span class="card-title">TEMPERATURE</span>
+                                        <div class="center">
+                                            <H5 id="device2_temp_id"> 99 % </H5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col s12 m6" style="min-width: 210px;">
+                                <div class="card teal roundElement">
+                                    <div class="card-content white-text">
+                                        <span class="card-title">HUMIDITY</span>
+                                        <H5 class="center" id="device2_hum_id">
+                                            79
+                                        </H5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col s12 m6" style="min-width: 210px;">
+                                <div class="card teal roundElement">
+                                    <div class="card-content white-text">
+                                        <span class="card-title">VOLTAGE</span>
+                                        <div class="center">
+                                            <H5 id="device2_voltage_id">220V</H5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col s12 m6" style="min-width: 210px;">
+                                <div class="card teal roundElement">
+                                    <div class="card-content white-text">
+                                        <span class="card-title">CURRENT</span>
+                                        <H5 class="center" id="device2_current_id">
+                                            82A
+                                        </H5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col s12 m6" style="min-width: 210px;">
+                                <div class="card teal roundElement">
+                                    <div class="card-content white-text">
+                                        <span class="card-title">POWER</span>
+                                        <H5 class="center" id="device2_power_id">
+                                            82W
+                                        </H5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col s12 m6" style="min-width: 210px;">
+                                <div class="card teal roundElement">
+                                    <div class="card-content white-text">
+                                        <span class="card-title">ENERGY</span>
+                                        <H5 class="center" id="device2_energy_id">
+                                            82Wh
+                                        </H5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col s12 m6" style="min-width: 210px;">
+                                <div class="card teal roundElement">
+                                    <div class="card-content white-text">
+                                        <span class="card-title">FREQ</span>
+                                        <H5 class="center" id="device2_freq_id">
+                                            60Hz
+                                        </H5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col s12 m6" style="min-width: 210px;">
+                                <div class="card teal roundElement">
+                                    <div class="card-content white-text">
+                                        <span class="card-title">PF</span>
+                                        <H5 class="center" id="device2_pf_id">
+                                            82
+                                        </H5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col s12 m6" style="min-width: 210px;">
+                                <div class="card teal roundElement">
+                                    <div class="card-content white-text">
+                                        <span class="card-title">Total VND</span>
+                                        <H5 class="center" id="device2_price_id">
+                                            82
+                                        </H5>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col s12 m6" style="min-width: 210px;">
+                                <div class="card teal roundElement">
+                                    <div class="card-content white-text">
+                                        <span class="card-title">Time Life</span>
+                                        <H5 class="center" id="device2_timelife_id">
+                                            82
+                                        </H5>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+
+        <div id="control_id" style="display: none;">
+            <div class="row ">
+                <!-- class="row card white roundElement" -->
+                <H1 class="center">Điều Khiển</H1>
+
+
+                <div class="col s10 m6" style="min-width: 210px;">
+                    <div class="card blue lighten-5 roundElement">
+                        <div class="card-content ">
+                            <span class="card-title ">
+                                <!-- <h4 class=""> -->
+                                Thiết bị 1
+                                <!-- </h4> -->
+                            </span>
+                            <div class="switch center">
+                                <label>
+                                    Tắt
+                                    <input id="device_1_switch" type="checkbox">
+                                    <span class="lever"></span>
+                                    Mở
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col s10 m6" style="min-width: 210px;">
+                    <div class="card blue lighten-5 roundElement">
+                        <div class="card-content ">
+                            <span class="card-title">Thiết bị 2</span>
+                            <div class="switch center">
+                                <label>
+                                    Tắt
+                                    <input id="device_2_switch" type="checkbox">
+                                    <span class="lever"></span>
+                                    Mở
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="history_id" style="display: none;">
+            <div class="row ">
+                <div class="s12">
+                    <div class="input-field col s10">
+                        <input type="text" class="datepicker" id="datepicker_history">
+                        <label for="timepicker">Chọn ngày lấy dữ liệu</label>
+                    </div>
+                    <div class="col s2" style="margin-top: 20px;">
+                        <button class="btn waves-effect waves-light" id="get_history_btn" name="action">Xong
+                            <i class="material-icons right">send</i>
+                        </button>
+                    </div>
+                </div>
+
+
+                <div class="col s12 m12">
+                    <div class="card white roundElement" style=" height: 50%; max-height: 400px; overflow-y: scroll;">
+                        <div class="card-content black-text responsive-table">
+
+                            <span class="card-title center-align">
+                                <h4 id="name_history_table">Chọn ngày để xem dữ liệu đã lưu</h4>
+                            </span>
+                            <br>
+                            <table id="history_table_id" class="centered" style="overflow: hidden;">
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col s12 m12">
+                    <div class="card white roundElement" style=" height: 50%; max-height: 400px; overflow-y: scroll;">
+                        <div class="card-content black-text responsive-table">
+
+                            <span class="card-title center-align">
+                                <h4 id="name_history_1_table">Chọn ngày để xem dữ liệu đã lưu</h4>
+                            </span>
+                            <br>
+                            <table id="history_1_table_id" class="centered" style="overflow: hidden;">
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+    
+        <div id="chart_id" style="display: none;">
+            <div class="row ">
+                <div class="col s12 m12">
+                    <div class="row">
+                        <div class="col s6">
+                            <div class="card white roundElement">
+                                <div class="card-content black-text">
+                                    <span class="card-title">DEVICE 1</span>
+                                    <canvas id="device_1_chart" style="width:100%;"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col s6">
+                            <div class="card white roundElement">
+                                <div class="card-content black-text">
+                                    <span class="card-title">DEVICE 2</span>
+                                    <canvas id="device_2_chart" style="width:100%;"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div id="info_id" style="display: none;">
+            <div class=row>
+                <div class="col s12 m12 ">
+                    <div class="card white roundElement">
+                        <div class="card-content black-text">
+                            <span class="card-title">Tên đề tài:</span>
+                            <br>
+                            <center>
+                                <span class="card-title">
+                                    <h4>Thiết bị giám sát và điều khiển Air Conditioner</h4>
+                            </center>
+                            <span class="card-title">BỘ MÔN:</span>
+                            <center>
+                                <span class="card-title">ĐIỀU KHIỂN HỌC</span>
+                            </center>
+                            <br>
+                            <span class="card-title">GVHD</span>
+                            <center>
+                                <span class="card-title">PGS.TS TRỊNH LƯƠNG MIÊN</span>
+                            </center>
+                            <br>
+                            <span class="card-title">SVTH</span>
+                            <center>
+                                <span class="card-title">BÙI HỮU PHƯỚC</span>
+                                <span class="card-title">MSSV: 191601180</span>
+                            </center>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script type="module">
+
+        import sweetalert2 from 'https://cdn.jsdelivr.net/npm/sweetalert2@8/+esm'
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+
+        const config = {
+            apiKey: "AIzaSyC83Wt94mijrqiws1Wfx7h_jDzimXhLd4o",
+            authDomain: "sample-736cc.firebaseapp.com",
+            databaseURL: "https://sample-736cc.firebaseio.com",
+            projectId: "sample-736cc",
+            storageBucket: "sample-736cc.appspot.com",
+            messagingSenderId: "248073967542",
+            appId: "1:248073967542:web:330c9e1d83bbace0005317"
+        };
+
+        firebase.initializeApp(config);
+        var database = firebase.database();
+
+
+        var today = new Date();
+        var m = today.getMonth() + 1
+        if (m < 10) {
+            m = "0" + m;
+        }
+
+        var d = today.getDate()
+        if (d < 10) {
+            d = "0" + d;
+        }
+
+        var _date = d + "-" + m + "-" + today.getFullYear();
+        var getFulldataChild1 = database.ref("ESP8266/realtime/device1/sensor/");
+        var getFulldataChild2 = database.ref("ESP8266/realtime/device2/sensor/");
+
+        var historyChild1 = database.ref("ESP8266/history/device1/" + _date);
+        var historyChild2 = database.ref("ESP8266/history/device2/" + _date);
+
+        var control_state_device1 = database.ref("ESP8266/realtime/device1/control/state");
+        var control_state_device2 = database.ref("ESP8266/realtime/device2/control/state");
+
+        control_state_device2.on('value', function (snapshot) {
+            const data = snapshot.val();
+            const json = JSON.stringify(data)
+            const json_parse = JSON.parse(json)
+            device_2_switch.checked = json_parse
+        });
+
+        control_state_device1.on('value', function (snapshot) {
+            const data = snapshot.val();
+            const json = JSON.stringify(data)
+            const json_parse = JSON.parse(json)
+            device_1_switch.checked = json_parse
+        });
+
+
+        function set_state_device1(device, state, learn1, learn2) {
+            var control_child = database.ref("ESP8266/realtime/device" + device + "/control/");
+
+            control_child.set({
+                state: state,
+                learn1: learn1,
+                learn2: learn2,
+                resetEnergy: 0,
+                resetWifi: 0
+            });
+        }
+
+        getFulldataChild1.on('value', function (snapshot) {
+            const data = snapshot.val();
+
+            const json = JSON.stringify(data)
+            const json_parse = JSON.parse(json)
+            console.log(json_parse)
+            var temp = json_parse.temp
+            var hum = json_parse.hum
+            var energy = json_parse.energy
+            var current = json_parse.current
+            var voltage = json_parse.voltage
+            var power = json_parse.power
+            var frequency = json_parse.frequency
+            var pf = json_parse.pf
+            var price = json_parse.price
+            var timelife = json_parse.timelife
+
+            // log to console
+            console.log("temp: " + temp)
+            console.log("hum: " + hum)
+            console.log("energy: " + energy)
+            console.log("current: " + current)
+            console.log("voltage: " + voltage)
+            console.log("power: " + power)
+            console.log("frequency: " + frequency)
+            console.log("pf: " + pf)
+            console.log("price: " + price)
+            console.log("timelife: " + timelife)
+
+            // update to html
+            device_1_temp.innerHTML = temp
+            device_1_hum.innerHTML = hum
+            device_1_energy.innerHTML = energy
+            device_1_current.innerHTML = current
+            device_1_voltage.innerHTML = voltage
+            device_1_power.innerHTML = power
+            device_1_frequency.innerHTML = frequency
+
+            device_1_pf.innerHTML = pf
+            device_1_price.innerHTML = price
+            device_1_timelife.innerHTML = timelife
+
+        });
+
+
+        getFulldataChild2.on('value', function (snapshot) {
+            const data = snapshot.val();
+
+            const json = JSON.stringify(data)
+            const json_parse = JSON.parse(json)
+            console.log(json_parse)
+            var temp = json_parse.temp
+            var hum = json_parse.hum
+            var energy = json_parse.energy
+            var current = json_parse.current
+            var voltage = json_parse.voltage
+            var power = json_parse.power
+            var frequency = json_parse.frequency
+            var pf = json_parse.pf
+            var price = json_parse.price
+            var timelife = json_parse.timelife
+
+            // log to console
+            console.log("temp: " + temp)
+            console.log("hum: " + hum)
+            console.log("energy: " + energy)
+            console.log("current: " + current)
+            console.log("voltage: " + voltage)
+            console.log("power: " + power)
+            console.log("frequency: " + frequency)
+            console.log("pf: " + pf)
+            console.log("price: " + price)
+            console.log("timelife: " + timelife)
+
+            // update to html
+            device_2_temp.innerHTML = temp
+            device_2_hum.innerHTML = hum
+            device_2_energy.innerHTML = energy
+            device_2_current.innerHTML = current
+            device_2_voltage.innerHTML = voltage
+            device_2_power.innerHTML = power
+            device_2_frequency.innerHTML = frequency
+
+            device_2_pf.innerHTML = pf
+            device_2_price.innerHTML = price
+            device_2_timelife.innerHTML = timelife
+
+        });
+
+        historyChild1.on('value', function (snapshot) {
+            const data = snapshot.val();
+            const json = JSON.stringify(data)
+            const json_parse = JSON.parse(json)
+            let result = {};
+            for (let key in json_parse) {
+                var temp = json_parse[key].temp
+                var hum = json_parse[key].hum
+                var current = json_parse[key].current
+                var power = json_parse[key].power
+                var time = json_parse[key].time
+
+                var _time = time.split(":")
+                var _hour = _time[0]
+                result[_hour] = {
+                    temp: temp,
+                    hum: hum,
+                    current: current,
+                    power: power,
+                    time: time
+                }
+
+            }
+
+            console.log(result)
+            for (let key in result) {
+                console.log(result[key].temp)
+                console.log(result[key].hum)
+                console.log(result[key].current)
+                console.log(result[key].power)
+                console.log(result[key].time)
+
+                x_values_device_1_time.push(result[key].time)
+                y_values_device_1_humidity.push(result[key].hum)
+                y_values_device_1_temperature.push(result[key].temp)
+                y_values_device_1_current.push(result[key].current)
+                y_values_device_1_power.push(result[key].power)
+    
+            }
+
+        });
+
+
+        historyChild2.on('value', function (snapshot) {
+            const data = snapshot.val();
+            const json = JSON.stringify(data)
+            const json_parse = JSON.parse(json)
+            let result = {};
+            for (let key in json_parse) {
+                var temp = json_parse[key].temp
+                var hum = json_parse[key].hum
+                var current = json_parse[key].current
+                var power = json_parse[key].power
+                var time = json_parse[key].time
+
+                var _time = time.split(":")
+                var _hour = _time[0]
+                result[_hour] = {
+                    temp: temp,
+                    hum: hum,
+                    current: current,
+                    power: power,
+                    time: time
+                }
+
+            }
+
+            console.log(result)
+            for (let key in result) {
+                console.log(result[key].temp)
+                console.log(result[key].hum)
+                console.log(result[key].current)
+                console.log(result[key].power)
+                console.log(result[key].time)
+
+                x_values_device_2_time.push(result[key].time)
+                y_values_device_2_humidity.push(result[key].hum)
+                y_values_device_2_temperature.push(result[key].temp)
+                y_values_device_2_current.push(result[key].current)
+                y_values_device_2_power.push(result[key].power)
+    
+            }
+
+        });
+
+
+
+        var device_1_switch = document.getElementById("device_1_switch");
+        var device_2_switch = document.getElementById("device_2_switch");
+        var device_1_temp = document.getElementById("device1_temp_id");
+        var device_1_hum = document.getElementById("device1_hum_id");
+        var device_1_voltage = document.getElementById("device1_voltage_id");
+        var device_1_current = document.getElementById("device1_current_id");
+        var device_1_power = document.getElementById("device1_power_id");
+        var device_1_energy = document.getElementById("device1_energy_id");
+        var device_1_frequency = document.getElementById("device1_freq_id");
+        var device_1_pf = document.getElementById("device1_pf_id");
+        var device_1_price = document.getElementById("device1_price_id");
+        var device_1_timelife = document.getElementById("device1_timelife_id");
+
+        var device_2_temp = document.getElementById("device2_temp_id");
+        var device_2_hum = document.getElementById("device2_hum_id");
+        var device_2_voltage = document.getElementById("device2_voltage_id");
+        var device_2_current = document.getElementById("device2_current_id");
+        var device_2_power = document.getElementById("device2_power_id");
+        var device_2_energy = document.getElementById("device2_energy_id");
+        var device_2_frequency = document.getElementById("device2_freq_id");
+        var device_2_pf = document.getElementById("device2_pf_id");
+        var device_2_price = document.getElementById("device2_price_id");
+        var device_2_timelife = document.getElementById("device2_timelife_id");
+
+        device_1_switch.onchange = function () {
+            var state = device_1_switch.checked ? 1 : 0;
+            set_state_device1(1, state, 0, 0)
+        }
+
+        device_2_switch.onchange = function () {
+            var state = device_2_switch.checked ? 1 : 0;
+            set_state_device1(2, state, 0, 0)
+        }
+
+
+        function map_range(value, low1, high1, low2, high2) {
+            return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
+        }
+
+
+        async function setText(location, value) {
+            // Pause execution of this async function for 2 seconds
+            await sleep(50);
+            var e = document.querySelector(location)
+
+            if (e == null) {
+                setText(location, value)
+            } else {
+                e.innerHTML = `<span class="text">${value}</span>`;
+            }
+        }
+
+        var datepickerOptions = {
+            container: document.querySelector('#datepicker-container'),
+            onOpen: function () {
+                var location = "#datepicker-container .open .datepicker-date-display"
+                var value = this.el.value
+                setText(location, value)
+            },
+            twelveHour: false,
+            format: 'dd/mm/yyyy',
+        }
+
+
+        $(document).ready(function () {
+
+            $('select:not([multiple])').material_select();
+            var elems_datepicker = document.querySelectorAll('.datepicker');
+            var instances_datepicker = M.Datepicker.init(elems_datepicker, {
+                format: 'dd-mm-yyyy'
+            });
+
+            // $('.timepicker').timepicker();
+            var elems = document.querySelectorAll('.timepicker');
+            var instances = M.Timepicker.init(elems, {
+                twelveHour: false,
+                format: 'HH:mm:ss',
+                i18n: {
+                    clear: 'Xóa',
+                    cancel: 'Hủy',
+                    done: 'Xong',
+                    twelveHour: false,
+                    format: 'hh:mm:ss'
+                }
+            });
+
+            $('.timepicker').on('change', function () {
+                let receivedVal = $(this).val();
+                $(this).val(receivedVal + ":00");
+            });
+            document.getElementById("enviroment_id").style.display = "block";
+            document.getElementById("control_id").style.display = "none";
+            document.getElementById("chart_id").style.display = "none";
+            document.getElementById("history_id").style.display = "none";
+            document.getElementById("info_id").style.display = "none";
+
+        });
+
+
+        var x_values_device_1_time = [];
+        var y_values_device_1_humidity = [];
+        var y_values_device_1_temperature = [];
+        var y_values_device_1_current = [];
+        var y_values_device_1_power = [];
+
+        var x_values_device_2_time = [];
+        var y_values_device_2_humidity = [];
+        var y_values_device_2_temperature = [];
+        var y_values_device_2_current = [];
+        var y_values_device_2_power = [];
+
+        var device_1_chart = new Chart("device_1_chart", {
+            type: "line",
+            data: {
+                labels: x_values_device_1_time,
+                datasets: [{
+                    label: "TEMPERATURE",
+                    data: y_values_device_1_temperature,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: "HUMIDITY",
+                    data: y_values_device_1_humidity,
+                    backgroundColor: [
+                        'rgba(21, 99, 0, 0.2)',
+                    ],
+                    borderColor: [
+                        'rgba(21, 99, 0, 1)',
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: "CURRENT",
+                    data: y_values_device_1_current,
+                    backgroundColor: [
+                        'rgba(100, 200, 132, 0.2)',
+                    ],
+                    borderColor: [
+                        'rgba(100, 200, 132, 1)',
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: "POWER",
+                    data: y_values_device_1_power,
+                    backgroundColor: [
+                        'rgba(0, 99, 255, 0.2)',
+                    ],
+                    borderColor: [
+                        'rgba(0, 99, 255, 1)',
+                    ],
+                    borderWidth: 1
+                }]
+            }
+        });
+
+        var device_2_chart = new Chart("device_2_chart", {
+            type: "line",
+            data: {
+                labels: x_values_device_2_time,
+                datasets: [{
+                    label: "TEMPERATURE",
+                    data: y_values_device_2_temperature,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: "HUMIDITY",
+                    data: y_values_device_2_humidity,
+                    backgroundColor: [
+                        'rgba(21, 99, 0, 0.2)',
+                    ],
+                    borderColor: [
+                        'rgba(21, 99, 0, 1)',
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: "CURRENT",
+                    data: y_values_device_2_current,
+                    backgroundColor: [
+                        'rgba(100, 200, 132, 0.2)',
+                    ],
+                    borderColor: [
+                        'rgba(100, 200, 132, 1)',
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: "POWER",
+                    data: y_values_device_2_power,
+                    backgroundColor: [
+                        'rgba(0, 99, 255, 0.2)',
+                    ],
+                    borderColor: [
+                        'rgba(0, 99, 255, 1)',
+                    ],
+                    borderWidth: 1
+                }]
+            }
+        });
+
+    </script>
+    <script type="text/javascript" src="js/main.js"></script>
+</body>
+
+</html>
